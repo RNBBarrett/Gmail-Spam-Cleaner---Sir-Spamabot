@@ -4,12 +4,12 @@
   <img src="https://github.com/RNBBarrett/Gmail-Spam-Cleaner---Sir-Spamabot/blob/main/spam-cleaning-robot.jpg?raw=true" alt="Spam Cleaner Bot"/>
 </p>
 
-This Google Apps Script scans your Gmail inbox for spam keywords, unsubscribes from those emails if an unsubscribe link is available, and then deletes the mail. It then sends you a summary of what was deleted and unsubscribed from, including links to recover emails if necessary.
+This Google Apps Script scans your Gmail inbox for a pre-define list of spam keywords and then deletes the mail it finds. It then sends you a summary of what was deleted together with an unsubscribe link if you want to unsubscribe from future spam.
 
 ### Features:
 - **Keyword-based spam detection**: Detects spam emails based on a customizable list of keywords.
-- **Automatic Unsubscribe**: Unsubscribes from emails with an available unsubscribe link before deleting.
-- **Detailed Summary**: Sends you a summary of deleted and unsubscribed emails, with links to restore them if necessary.
+- **Unsubscribe link**: Captures an Unsubscribe link for the user to use later.
+- **Detailed Summary**: Sends you a summary of deleted emails, with links to find and restore them from trash if you want to.
 
 ---
 
@@ -22,6 +22,7 @@ This Google Apps Script scans your Gmail inbox for spam keywords, unsubscribes f
 ### 2. **Paste the Code:**
 - Copy the script from this repository.
 - In the Google Apps Script editor, paste the script into the main code editor window.
+- Find and edit the gmail emails in the script - there are two places.
 
 ### 3. **Save the Script:**
 - Once the script is pasted, click the `File` menu and then `Save`.
@@ -42,7 +43,7 @@ To make the script run automatically at a set interval (daily, weekly, etc.), yo
 2. **Create a Trigger:**
    - **Choose which function to run:** Select `cleanUpSpam`.
    - **Select event source:** Choose `Time-driven`.
-   - **Select type of time-based trigger:** Select `Day timer` for daily cleanup, or `Week timer` for weekly cleanup.
+   - **Select type of time-based trigger:** Select `Day timer` for daily cleanup, or `Week timer` for weekly cleanup. 
    - **Set time of day:** Choose a specific time for the script to run (e.g., every morning).
 
 3. **Save the Trigger:**
@@ -83,9 +84,8 @@ Update this to your email address to ensure the summary of deleted and unsubscri
 ## 📧 Summary Email:
 The script sends a detailed summary of:
 
-Deleted Emails: Includes the email address, subject, and a link to recover each deleted email from the trash.
-Unsubscribed Emails: Lists the email addresses and the unsubscribe link used.
-This allows you to monitor what was deleted and unsubscribed, with direct links to recover any emails if needed.
+Deleted Emails: Includes the email address, subject, and a link to recover each deleted email from the trash as well as an unsubscribe link.
+
 
 ## 🛡️ Permissions Required:
 Gmail Access: The script requires access to your Gmail account in order to read, filter, and delete emails, as well as to unsubscribe from certain senders.

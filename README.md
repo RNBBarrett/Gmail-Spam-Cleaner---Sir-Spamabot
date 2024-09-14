@@ -1,6 +1,8 @@
-# Gmail-Spam-Cleaner---Sir-Spamabot🧹🤖
+<h1 style="text-align: center;">Gmail-Spam-Cleaner---Sir-Spamabot🧹🤖</h1>
 
-![Spam Cleaner Bot](https://github.com/RNBBarrett/Gmail-Spam-Cleaner---Sir-Spamabot/blob/main/spam-cleaning-robot.jpg?raw=true)
+<p align="center">
+  <img src="https://github.com/RNBBarrett/Gmail-Spam-Cleaner---Sir-Spamabot/blob/main/spam-cleaning-robot.jpg?raw=true" alt="Spam Cleaner Bot"/>
+</p>
 
 This Google Apps Script scans your Gmail inbox for spam keywords, unsubscribes from those emails if an unsubscribe link is available, and then deletes the mail. It then sends you a summary of what was deleted and unsubscribed from, including links to recover emails if necessary.
 
@@ -85,8 +87,8 @@ Deleted Emails: Includes the email address, subject, and a link to recover each 
 Unsubscribed Emails: Lists the email addresses and the unsubscribe link used.
 This allows you to monitor what was deleted and unsubscribed, with direct links to recover any emails if needed.
 
-###🛡️ Permissions Required:
+##🛡️ Permissions Required:
 Gmail Access: The script requires access to your Gmail account in order to read, filter, and delete emails, as well as to unsubscribe from certain senders.
 
-###👷 Contributing:
+##👷 Contributing:
 If you have any suggestions for improvements or new features, feel free to open an issue or submit a pull request. Contributions are always welcome!

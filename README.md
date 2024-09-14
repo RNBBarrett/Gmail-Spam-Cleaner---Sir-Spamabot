@@ -87,8 +87,8 @@ Deleted Emails: Includes the email address, subject, and a link to recover each 
 Unsubscribed Emails: Lists the email addresses and the unsubscribe link used.
 This allows you to monitor what was deleted and unsubscribed, with direct links to recover any emails if needed.
 
-##🛡️ Permissions Required:
+## 🛡️ Permissions Required:
 Gmail Access: The script requires access to your Gmail account in order to read, filter, and delete emails, as well as to unsubscribe from certain senders.
 
-##👷 Contributing:
+## 👷 Contributing:
 If you have any suggestions for improvements or new features, feel free to open an issue or submit a pull request. Contributions are always welcome!

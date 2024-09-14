@@ -57,5 +57,36 @@ The list of keywords used to detect spam. The script searches for these keywords
 var spamKeywords = [
   'unsubscribe', 'promotion', // Add more keywords as needed...
 ];
+```
+### 2. allowList (Array):
+This list contains trusted email addresses or domains that you want to exclude from being marked as spam. These emails will not be affected by the script even if they match a keyword.
 
-You can...
+```javascript
+var allowList = [
+  '@myschool.edu',
+  'your-email@gmail.com',
+  'no-reply@classroom.google.com'
+];
+```
+Add your trusted contacts or domains here. You can expand this array with any other email addresses or domains you want to exclude from spam filtering.
+
+### 3. Your Email Address:
+Make sure to set your email address in the recipient variable to receive the summary report. The script sends a summary of deleted and unsubscribed emails to this address.
+
+```javascript
+var recipient = "your-email@gmail.com";
+```
+Update this to your email address to ensure the summary of deleted and unsubscribed emails is delivered to you.
+
+## 📧 Summary Email:
+The script sends a detailed summary of:
+
+Deleted Emails: Includes the email address, subject, and a link to recover each deleted email from the trash.
+Unsubscribed Emails: Lists the email addresses and the unsubscribe link used.
+This allows you to monitor what was deleted and unsubscribed, with direct links to recover any emails if needed.
+
+###🛡️ Permissions Required:
+Gmail Access: The script requires access to your Gmail account in order to read, filter, and delete emails, as well as to unsubscribe from certain senders.
+
+###👷 Contributing:
+If you have any suggestions for improvements or new features, feel free to open an issue or submit a pull request. Contributions are always welcome!

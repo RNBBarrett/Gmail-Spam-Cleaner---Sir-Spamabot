@@ -1,0 +1,214 @@
+function cleanUpSpam() {
+  var threads = GmailApp.getInboxThreads(); // Get all inbox threads
+  var spamKeywords = [
+    // Promotional and Marketing Keywords
+    'unsubscribe', 'promotion', 'newsletter', 'marketing', 'discount', 'sale',
+    'limited time', 'special offer', 'exclusive deal', 'click here', 'buy now', 
+    'free trial', 'order now', 'act now', 'earn money', 'get rich', 'urgent',
+    'clearance', 'last chance', 'claim your', 'congratulations', 'winner',
+    'you have won', 'offer expires', 'reward', 'gift card', 'prize', 'risk-free',
+    'money-back', 'guaranteed', 'investment', 'limited availability', 'special savings',
+    'trial membership', 'gift voucher', 'freebie', 'VIP access', 'exclusive invitation',
+    'loyalty rewards', 'VIP event', 'daily deal', 'bargain', 'promo code', 
+    'limited offer', 'bonus offer', 'membership offer', 'special discount', 
+    'hurry up', 'once in a lifetime', 'join free', 'apply today', 'act fast', 
+    'limited spots', 'limited supply', 'only for you', 'exclusive for you', 
+    'one-time offer', 'before it’s too late', 'final sale', 'grand opening sale',
+    'free shipping', 'flash sale', 'today’s special', 'free trial', 'free download',
+    'risk-free trial', 'big savings', 'black friday deal', 'cyber monday sale',
+    'new inventory', 'blowout sale', 'crazy deal', 'stock clearance', 'doorbuster deal',
+
+    // Financial and Investment Keywords
+    'credit card', 'mortgage', 'loan approved', 'apply now', 'low interest', 
+    'approved loan', 'bad credit loans', 'no credit check', 'payday loans', 
+    'fast loan', 'easy credit', 'zero interest', 'improve your credit', 
+    'credit approved', 'repair your credit', 'personal finance', 'IRS notice', 
+    'student loan relief', 'tax refund', 'investment opportunity', 'binary options',
+    'penny stocks', 'high return', 'make money fast', 'retirement savings', 
+    'financial aid', 'earn cash', 'quick loan', 'cash rewards', 'crypto', 
+    'cryptocurrency', 'bitcoin', 'forex trading', 'investment scheme', 
+    'get paid instantly', 'retirement planning', 'wealth management', 
+    'real estate investment', 'stock market tips', 'day trading', 'huge profit',
+    'guaranteed profit', 'multi-level marketing', 'pyramid scheme', 'passive income',
+    'big winnings', 'jackpot', 'lottery winner', 'claim prize', 'win big', 'easy cash',
+    'fast returns', 'double your money', 'bank transfer', 'Western Union', 
+    'wire money', 'secure transaction', 'money transfer', 'fraudulent activity',
+    'online banking alert', 'account activity', 'bank account update', 'PayPal', 
+    'no fees', 'no hidden fees', 'low interest loan', 'consolidate debt', 
+    'loan forgiveness', 'debt forgiveness', 'tax season reminder', 'legal settlement',
+    'IRS filing', 'class action', 'tax rebate', 'personal loan', 'free quote',
+
+    // Phishing and Scam Keywords (Expanded)
+    'urgent response required', 'emergency notification', 'account suspension', 
+    'security warning', 'password reset', 'suspicious activity', 'identity theft', 
+    'unauthorized access', 'compromised account', 'secure transaction', 
+    'account locked', 'security update', 'fraud prevention', 'phishing alert',
+    'scam alert', 'login attempt', 'emergency', 'action required', 'fraudulent claim',
+    'fake invoice', 'account compromised', 'fake transaction', 'alert', 'important notice', 
+    'immediate response', 'password update', 'click to restore', 'security alert',
+    'compromised password', 'email compromise', 'unauthorized login', 
+    'false login attempt', 'account breach', 'suspicious login', 'compromise attempt',
+    'fake update', 'email alert', 'scam notification', 'security notice', 
+    'unusual activity', 'verify your identity', 'confirm account details', 
+    'verification needed', 'password compromise', 'credit card fraud',
+    'unauthorized payment', 'sensitive information', 'payment declined', 
+    'account review', 'restricted access', 'locked account', 'reset credentials',
+    'account details needed', 'compromise warning', 'unauthorized charge', 
+    'reconfirm credentials', 'suspicious payment', 'confirm identity', 'identity verification',
+    'unauthorized transfer', 'recovery alert', 'suspicious withdrawal', 'payment declined notice',
+    'chargeback alert', 'fraud alert', 'personal information compromised', 
+    'government impersonation', 'false bank alert', 'bank fraud prevention',
+    'click to verify', 'confirm your email', 'invalid login attempt', 
+    'review account details', 'false security check', 'malicious login attempt',
+
+    // Health and Wellness Keywords
+    'viagra', 'prescription', 'pharmacy', 'no cost', 'guaranteed results', 
+    'miracle cure', 'herbal treatment', 'natural remedy', 'weight loss', 
+    'lose weight', 'burn fat', 'muscle gain', 'diet pills', 'erectile dysfunction', 
+    'male enhancement', 'build muscle fast', 'diet supplement', 'health supplement',
+    'skin rejuvenation', 'wrinkle remover', 'anti-aging', 'teeth whitening', 
+    'cosmetic surgery', 'hair loss', 'grow hair', 'pain relief', 'boost libido', 
+    'boost immune system', 'anxiety relief', 'natural supplements', 'herbal remedy', 
+    'wellness tips', 'vitamins', 'calorie burner', 'fat burner', 'boost energy', 
+    'skin care', 'increase stamina', 'diet plan', 'fitness supplement', 
+    'alternative medicine', 'homeopathic remedy', 'miracle weight loss', 
+    'enhance performance', 'immune booster', 'detox your body', 'lose fat fast',
+  
+    // Work from Home and Make Money Online Keywords
+    'work from home', 'home-based business', 'no experience needed', 'start today',
+    'immediate income', 'quick cash', 'paid survey', 'get paid to click', 
+    'make money online', 'online business opportunity', 'remote job', 'flexible schedule',
+    'passive income', 'complete offers', 'watch ads for money', 'get rich quick',
+    'online marketing', 'internet marketing', 'affiliate marketing', 'start earning now',
+    'paid instantly', 'earn from home', 'make money fast', 'instant income',
+    'make extra money', 'cashback rewards', 'survey rewards', 'join today', 
+    'lifetime membership', 'free membership', 'premium subscription', 'VIP subscription',
+    'sign up now', 'exclusive access', 'become a member', 'members only', 'cancel anytime',
+  
+    // Miscellaneous Keywords
+    'free gift', 'free bonus', 'hot deal', 'best price', 'amazing deal', 
+    'unbelievable price', 'instant access', 'best price guarantee', 'cheap flights',
+    'cheap tickets', 'holiday deals', 'travel offer', 'vacation discount', 
+    'hotel savings', 'luxury vacation', 'holiday package', 'exclusive vacation',
+    'event promotion', 'as seen on TV', 'limited spots available', 'special invitation',
+    'risk-free purchase', 'early bird offer', 'exclusive sale', 'save more', 
+    'cheap insurance', 'unbeatable deal', 'prize draw', 'free trial offer', 
+    'lucky draw', 'grand prize', 'win a car', 'lifetime deal', 'act immediately',
+    'biggest deal of the year', 'new customer special', 'special offer only for you',
+    'exclusive giveaway', 'free giveaway', 'gift giveaway', 'free download', 
+    'shop now', 'online store', 'earn points', 'money-back guarantee', 
+    'guaranteed satisfaction', 'limited edition', 'only for a limited time'
+  ];
+
+  var allowList = ['@myschool.edu', 'YOURGMAILHERE@gmail.com', 'broadcasts@schoolmessengermail.com','@falmouthpowerboatschool.co.uk','no-reply@classroom.google.com']; // Add trusted emails or domains
+  var deletedEmails = [];
+  var unsubscribedEmails = [];
+  var deletedCount = 0;
+  var unsubscribedCount = 0;
+  
+  for (var i = 0; i < threads.length; i++) {
+    var thread = threads[i];
+    var messages = thread.getMessages();
+    var isAllowed = false;
+    
+    for (var j = 0; j < messages.length; j++) {
+      var message = messages[j];
+      var subject = message.getSubject().toLowerCase();
+      var body = message.getPlainBody().toLowerCase();
+      var from = message.getFrom().toLowerCase();
+      
+      // Check if the sender is in the allowlist
+      for (var k = 0; k < allowList.length; k++) {
+        if (from.indexOf(allowList[k].toLowerCase()) !== -1) {
+          isAllowed = true;
+          break;
+        }
+      }
+
+      // If sender is not in the allowlist, check for spam keywords
+      if (!isAllowed) {
+        for (var k = 0; k < spamKeywords.length; k++) {
+          if (subject.includes(spamKeywords[k]) || body.includes(spamKeywords[k])) {
+            // Log the email address, subject, and thread ID for the summary
+            deletedEmails.push({
+              from: message.getFrom(),
+              subject: message.getSubject(),
+              threadId: thread.getId()
+            });
+
+            // Unsubscribe if possible
+            var unsubscribeLink = getUnsubscribeLink(message);
+            if (unsubscribeLink) {
+              if (unsubscribe(unsubscribeLink)) {
+                unsubscribedEmails.push({
+                  from: message.getFrom(),
+                  unsubscribeLink: unsubscribeLink
+                });
+                unsubscribedCount++;
+              }
+            }
+
+            // Move the thread to trash
+            thread.moveToTrash();
+            deletedCount++;
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  // Send summary email if any emails were deleted or unsubscribed
+  if (deletedEmails.length > 0 || unsubscribedEmails.length > 0) {
+    var recipient = "YOURGMAILHERE@gmail.com"; // Replace with your email address
+    var subject = "Spam Cleanup Summary: " + deletedCount + " Emails Deleted, " + unsubscribedCount + " Emails Unsubscribed";
+    var body = "The following emails were deleted:\n\n";
+    
+    for (var i = 0; i < deletedEmails.length; i++) {
+      body += "From: " + deletedEmails[i].from + "\n";
+      body += "Subject: " + deletedEmails[i].subject + "\n";
+      body += "Thread ID: " + deletedEmails[i].threadId + "\n";
+      body += "Restore: https://mail.google.com/mail/u/0/#all/" + deletedEmails[i].threadId + "\n\n";
+    }
+
+    if (unsubscribedEmails.length > 0) {
+      body += "\nThe following emails were successfully unsubscribed:\n\n";
+      for (var i = 0; i < unsubscribedEmails.length; i++) {
+        body += "From: " + unsubscribedEmails[i].from + "\n";
+        body += "Unsubscribe Link: " + unsubscribedEmails[i].unsubscribeLink + "\n\n";
+      }
+    }
+
+    // Send the email
+    MailApp.sendEmail(recipient, subject, body);
+  }
+  
+  Logger.log('Deleted ' + deletedCount + ' spam threads and unsubscribed from ' + unsubscribedCount + ' emails.');
+}
+
+// Function to find unsubscribe link from the email headers
+function getUnsubscribeLink(message) {
+  var headers = message.getRawContent();
+  
+  // Search for common patterns of unsubscribe links
+  var unsubscribePattern = /<mailto:(.+?)>|<https?:\/\/.+?unsubscribe.+?>/gi;
+  var match = unsubscribePattern.exec(headers);
+  
+  if (match) {
+    return match[0].replace(/<|>/g, ''); // Clean up the match
+  }
+  
+  return null;
+}
+
+// Function to unsubscribe by visiting the link
+function unsubscribe(link) {
+  try {
+    var response = UrlFetchApp.fetch(link);
+    Logger.log('Unsubscribed using link: ' + link);
+    return true;
+  } catch (e) {
+    Logger.log('Failed to unsubscribe: ' + e.message);
+    return false;
+  }
+}

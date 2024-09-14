@@ -38,7 +38,7 @@ function cleanUpSpam() {
     'loan forgiveness', 'debt forgiveness', 'tax season reminder', 'legal settlement',
     'IRS filing', 'class action', 'tax rebate', 'personal loan', 'free quote',
 
-    // Phishing and Scam Keywords (Expanded)
+    // Phishing and Scam Keywords
     'urgent response required', 'emergency notification', 'account suspension', 
     'security warning', 'password reset', 'suspicious activity', 'identity theft', 
     'unauthorized access', 'compromised account', 'secure transaction', 
@@ -73,18 +73,7 @@ function cleanUpSpam() {
     'skin care', 'increase stamina', 'diet plan', 'fitness supplement', 
     'alternative medicine', 'homeopathic remedy', 'miracle weight loss', 
     'enhance performance', 'immune booster', 'detox your body', 'lose fat fast',
-  
-    // Work from Home and Make Money Online Keywords
-    'work from home', 'home-based business', 'no experience needed', 'start today',
-    'immediate income', 'quick cash', 'paid survey', 'get paid to click', 
-    'make money online', 'online business opportunity', 'remote job', 'flexible schedule',
-    'passive income', 'complete offers', 'watch ads for money', 'get rich quick',
-    'online marketing', 'internet marketing', 'affiliate marketing', 'start earning now',
-    'paid instantly', 'earn from home', 'make money fast', 'instant income',
-    'make extra money', 'cashback rewards', 'survey rewards', 'join today', 
-    'lifetime membership', 'free membership', 'premium subscription', 'VIP subscription',
-    'sign up now', 'exclusive access', 'become a member', 'members only', 'cancel anytime',
-  
+
     // Miscellaneous Keywords
     'free gift', 'free bonus', 'hot deal', 'best price', 'amazing deal', 
     'unbelievable price', 'instant access', 'best price guarantee', 'cheap flights',
@@ -100,23 +89,21 @@ function cleanUpSpam() {
     'guaranteed satisfaction', 'limited edition', 'only for a limited time'
   ];
 
-  var allowList = ['@myschool.edu', 'YOURGMAILHERE@gmail.com', 'broadcasts@schoolmessengermail.com','@falmouthpowerboatschool.co.uk','no-reply@classroom.google.com']; // Add trusted emails or domains
+var allowList = ['@myschool.edu', 'YOURGMAILHERE@gmail.com', 'broadcasts@schoolmessengermail.com','@falmouthpowerboatschool.co.uk','no-reply@classroom.google.com']; // Add trusted emails or domains
   var deletedEmails = [];
-  var unsubscribedEmails = [];
   var deletedCount = 0;
-  var unsubscribedCount = 0;
-  
+
   for (var i = 0; i < threads.length; i++) {
     var thread = threads[i];
     var messages = thread.getMessages();
     var isAllowed = false;
-    
+
     for (var j = 0; j < messages.length; j++) {
       var message = messages[j];
       var subject = message.getSubject().toLowerCase();
       var body = message.getPlainBody().toLowerCase();
       var from = message.getFrom().toLowerCase();
-      
+
       // Check if the sender is in the allowlist
       for (var k = 0; k < allowList.length; k++) {
         if (from.indexOf(allowList[k].toLowerCase()) !== -1) {
@@ -129,24 +116,17 @@ function cleanUpSpam() {
       if (!isAllowed) {
         for (var k = 0; k < spamKeywords.length; k++) {
           if (subject.includes(spamKeywords[k]) || body.includes(spamKeywords[k])) {
-            // Log the email address, subject, and thread ID for the summary
+
+            // Capture unsubscribe links from headers or body, including around the word "unsubscribe"
+            var unsubscribeLink = getUnsubscribeLink(message, body);
+
+            // Log the email address, subject, thread ID, and unsubscribe link for the summary
             deletedEmails.push({
               from: message.getFrom(),
               subject: message.getSubject(),
-              threadId: thread.getId()
+              threadId: thread.getId(),
+              unsubscribeLink: unsubscribeLink || 'No unsubscribe link found'
             });
-
-            // Unsubscribe if possible
-            var unsubscribeLink = getUnsubscribeLink(message);
-            if (unsubscribeLink) {
-              if (unsubscribe(unsubscribeLink)) {
-                unsubscribedEmails.push({
-                  from: message.getFrom(),
-                  unsubscribeLink: unsubscribeLink
-                });
-                unsubscribedCount++;
-              }
-            }
 
             // Move the thread to trash
             thread.moveToTrash();
@@ -157,58 +137,58 @@ function cleanUpSpam() {
       }
     }
   }
-  
-  // Send summary email if any emails were deleted or unsubscribed
-  if (deletedEmails.length > 0 || unsubscribedEmails.length > 0) {
+
+  // Send summary email if any emails were deleted
+  if (deletedEmails.length > 0) {
     var recipient = "YOURGMAILHERE@gmail.com"; // Replace with your email address
-    var subject = "Spam Cleanup Summary: " + deletedCount + " Emails Deleted, " + unsubscribedCount + " Emails Unsubscribed";
-    var body = "The following emails were deleted:\n\n";
-    
+    var subject = "Spam Cleanup Summary: " + deletedCount + " Emails Deleted";
+
+    // Build the email body with an HTML table for better formatting
+    var body = "<p>The following emails were deleted:</p>";
+    body += "<table border='1' cellpadding='5' cellspacing='0'>";
+    body += "<tr><th>From</th><th>Subject</th><th>Thread ID</th><th>Restore Link</th><th>Unsubscribe Link</th></tr>";
+
     for (var i = 0; i < deletedEmails.length; i++) {
-      body += "From: " + deletedEmails[i].from + "\n";
-      body += "Subject: " + deletedEmails[i].subject + "\n";
-      body += "Thread ID: " + deletedEmails[i].threadId + "\n";
-      body += "Restore: https://mail.google.com/mail/u/0/#all/" + deletedEmails[i].threadId + "\n\n";
+      body += "<tr>";
+      body += "<td>" + deletedEmails[i].from + "</td>";
+      body += "<td>" + deletedEmails[i].subject + "</td>";
+      body += "<td>" + deletedEmails[i].threadId + "</td>";
+      body += "<td><a href='https://mail.google.com/mail/u/0/#all/" + deletedEmails[i].threadId + "'>Restore</a></td>";
+      body += "<td>" + deletedEmails[i].unsubscribeLink + "</td>";
+      body += "</tr>";
     }
 
-    if (unsubscribedEmails.length > 0) {
-      body += "\nThe following emails were successfully unsubscribed:\n\n";
-      for (var i = 0; i < unsubscribedEmails.length; i++) {
-        body += "From: " + unsubscribedEmails[i].from + "\n";
-        body += "Unsubscribe Link: " + unsubscribedEmails[i].unsubscribeLink + "\n\n";
-      }
-    }
+    body += "</table>";
 
-    // Send the email
-    MailApp.sendEmail(recipient, subject, body);
+    // Send the email as HTML
+    MailApp.sendEmail({
+      to: recipient,
+      subject: subject,
+      htmlBody: body
+    });
   }
-  
-  Logger.log('Deleted ' + deletedCount + ' spam threads and unsubscribed from ' + unsubscribedCount + ' emails.');
+
+  Logger.log('Deleted ' + deletedCount + ' spam threads.');
 }
 
-// Function to find unsubscribe link from the email headers
-function getUnsubscribeLink(message) {
+// Function to find unsubscribe link from the email headers or body, focusing on the word "unsubscribe"
+function getUnsubscribeLink(message, body) {
   var headers = message.getRawContent();
   
-  // Search for common patterns of unsubscribe links
-  var unsubscribePattern = /<mailto:(.+?)>|<https?:\/\/.+?unsubscribe.+?>/gi;
+  // Search for common patterns of unsubscribe links in the headers and body
+  var unsubscribePattern = /unsubscribe.*?(<mailto:(.+?)>|<https?:\/\/.+?>)/gi;
   var match = unsubscribePattern.exec(headers);
-  
+
   if (match) {
     return match[0].replace(/<|>/g, ''); // Clean up the match
   }
   
-  return null;
-}
-
-// Function to unsubscribe by visiting the link
-function unsubscribe(link) {
-  try {
-    var response = UrlFetchApp.fetch(link);
-    Logger.log('Unsubscribed using link: ' + link);
-    return true;
-  } catch (e) {
-    Logger.log('Failed to unsubscribe: ' + e.message);
-    return false;
+  // If not found in headers, search in the body
+  match = unsubscribePattern.exec(body);
+  
+  if (match) {
+    return match[0].replace(/<|>/g, ''); // Clean up the match
   }
+
+  return null; // No unsubscribe link found
 }
